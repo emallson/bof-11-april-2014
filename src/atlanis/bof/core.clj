@@ -42,3 +42,22 @@
       (concat (quicksort (:lesser split-result))
               (:equal split-result)
               (quicksort (:greater split-result))))))
+
+(defn edit-distance
+  "Computes the edit (aka Levenshtein) distance between s and t.
+
+  Based on the code on Rosetta Code."
+  [s t]
+  (with-local-vars [f (memoize
+                       (fn [s t]
+                         (let [len-s (count s)
+                               len-t (count t)]
+                           (cond (zero? len-s) len-t
+                                 (zero? len-t) len-s
+                                 :else
+                                 (let [cost (if (= (first s) (first t)) 0 1)]
+                                   (min (inc (f (rest s) t))
+                                        (inc (f s (rest t)))
+                                        (+ cost
+                                           (f (rest s) (rest t)))))))))]
+    (f s t)))
