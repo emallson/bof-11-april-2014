@@ -1,0 +1,80 @@
+#+TITLE: Quicksort in Clojure
+#+AUTHOR: J David Smith
+#+DATE: <2014-04-11 Fri>
+#+OPTIONS: toc:nil num:nil
+#+STARTUP: beamer
+#+LATEX_HEADER: \setbeamersize{text margin left=10pt}
+
+* Clojure
+  - Dialect of Lisp
+  - Compiles into JVM Bytecode
+
+* Quicksort
+  :PROPERTIES:
+  :BEAMER_ENV: fullframe
+  :BEAMER_OPT: shrink
+  :END:
+
+#+begin_src clojure
+(defn quicksort
+  "A functional recursive implementation of Quicksort.
+  Takes a list of numbers to sort as its only parameter."
+  [numbers]
+  (if (<= (count numbers) 1)
+    numbers
+    (let [pivot-element (nth numbers
+                             (rand-int (count numbers)))
+          split-result (quicksort-split numbers
+                                        pivot-element)]
+      (concat (quicksort (:lesser split-result))
+              (:equal split-result)
+              (quicksort (:greater split-result))))))
+#+end_src
+
+
+* Output
+  #+begin_src clojure
+(def test-list (take 10 (repeatedly #(rand-int 10))))
+;;=> (1 8 2 0 8 0 2 0 2 7)
+(quicksort test-list)
+;;=> (0 0 0 1 2 2 2 7 8 8)
+  #+end_src
+
+
+* Split
+  :PROPERTIES:
+  :BEAMER_ENV: fullframe
+  :BEAMER_OPT: shrink
+  :END:
+\fontsize{10pt}{8pt}\selectfont
+#+begin_src clojure
+  (defn quicksort-split
+    "Splitting function for quicksort. Returns a map containing
+    :lesser, :equal and :greater values."
+    [numbers pivot-element]
+    (let [assoc-conj (fn [coll key val]
+                       (assoc-in coll [key]
+                                 (conj (key coll) val)))
+          reduction (fn [collections number]
+                      (cond
+                        (< number pivot-element) (assoc-conj
+                                                   collections
+                                                   :lesser number)
+                        (= number pivot-element) (assoc-conj
+                                                   collections
+                                                   :equal number)
+                        :else (assoc-conj collections
+                                          :greater number)))]
+      (reduce reduction {} numbers)))
+#+end_src
+
+
+* Split Output
+  #+begin_src clojure
+;; remember: test-list is (1 8 2 0 8 0 2 0 2 7)
+(quicksort-split test-list 2)
+;;=> {:equal (2 2 2), :greater (7 8 8), :lesser (0 0 0 1)}
+  #+end_src
+
+* Code Available on Github
+  https://github.com/emallson/bof-11-april-2014

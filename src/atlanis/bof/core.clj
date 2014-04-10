@@ -31,7 +31,7 @@
             {} numbers)))
 
 (defn quicksort
-  "A functional recursive implementation of the Sieve of Eratosthenes.
+  "A functional recursive implementation of Quicksort.
 
   Takes a list of numbers to sort as its only parameter."
   [numbers]

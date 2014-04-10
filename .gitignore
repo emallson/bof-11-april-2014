@@ -8,3 +8,7 @@ pom.xml.asc
 /.lein-*
 /.nrepl-port
 /TAGS
+/presentation.bbl
+/presentation.blg
+/presentation.pdf
+/presentation.tex
